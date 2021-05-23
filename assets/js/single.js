@@ -1,5 +1,6 @@
 // query selectors
 var issueContainerEl = document.querySelector("#issues-container");
+var limitWarningEl = document.querySelector("#limit-warning");
 
 
 var getRepoIssues = function(repo) {
@@ -12,6 +13,10 @@ var getRepoIssues = function(repo) {
             console.log(data);
             // pass response data to the dom fucntion
             displayIssues(data);
+            if (response.headers.get("Link")) {
+                displayWarning(repo);
+                console.log("repo has more than 30 issues");
+            }
           });
         }
         else {
@@ -55,4 +60,16 @@ var displayIssues = function (issues) {
     }
 };
 
-getRepoIssues("spectocr/spectorportfolio");
+var displayWarning = function(repo) {
+    //add text to warning container
+    limitWarningEl.textContent = ("To see more than 30 issues, visit ");
+    var linkEl = document.createElement("a");
+    linkEl.textContent = ("See more issue on GeitHub.com");
+    linkEl.setAttribute("href", "https://github.com/" + repo + "/issues");
+    linkEl.setAttribute("target", "_blank");
+
+    // append to warning container
+    limitWarningEl.appendChild(linkEl);
+};
+
+getRepoIssues("facebook/react");
